@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ExcelConvert
+
+logging:
+  level:
+    root: error
+  pattern:
+    console: "%msg%n"
