@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<excel removeBlankRowAfterConvert="true"
+       removeRowHandler="cn.xiaojianzheng.dongfeng.handler.ExcelRemoveRowHandler"
+       excelConvertHandlerClass="cn.xiaojianzheng.dongfeng.convert.DongfengExcelConvert">
+
+    <!-- 全局配置 -->
+    <properties>
+        <!-- 布尔值单元格 转换 -->
+        <booleanProperty yes="是" no="否"/>
+        <!-- 小数保留几位，默认四舍五入 -->
+        <globalScale>2</globalScale>
+        <!-- 是否需要四舍五入 -->
+        <needScale>false</needScale>
+        <!-- 百分比格式化 -->
+        <globalBigDecimalFormat>0.######</globalBigDecimalFormat>
+        <!-- 日期格式化 -->
+        <globalDatetimeFormat>yyyy年M月d日</globalDatetimeFormat>
+        <!-- 解析日期格式，可以添加多个 -->
+        <parseDateFormats>
+            <parseDateFormat>yyyy-MM</parseDateFormat>
+            <parseDateFormat>HH:mm</parseDateFormat>
+        </parseDateFormats>
+    </properties>
+
+    <columns>
+        <column name="序号" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.IndexNumberHandler">
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            </associate>
+        </column>
+        <column name="合同版本号" allowEmpty="false"/>
+        <column name="还款方式" allowEmpty="false"/>
+        <column name="贴息类型" allowEmpty="false"/>
+        <column name="是否解除合同" allowEmpty="false">
+            <convertRule oldValue="解除" newValue="是"/>
+            <convertRule oldValue="不解除" newValue="否"/>
+        </column>
+        <column name="是否是电子合同" from="是否为电子合同" allowEmpty="false"/>
+        <column name="是否有展期" allowEmpty="false"/>
+        <column name="被告类型" allowEmpty="false">
+            <associate allowEmpty="false" handler="cn.xiaojianzheng.dongfeng.handler.AccusedTypeHandler">
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告送达约定类型" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedSendTypeHandler">
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被合同地址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告是否为第三人" fixedValue="否"/>
+        <!-- 第一个被告填否，其余填是 -->
+        <column name="被告是否为保证人">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedIsGuarantorHandler">
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告名称" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告民族">
+            <associate>
+                <columnName>^(担保)?[一二三四五六七八九十]被民族.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告身份证地址/户籍地址" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(担保)?[一二三四五六七八九十]被住址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告证件号" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(担保)?[一二三四五六七八九十]被身份证号码?.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告司法送达地址" allowEmpty="false">
+            <associate>
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被合同地址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告手机号码" allowEmpty="false">
+            <associate>
+                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(联系)?电话.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业注册地址" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^担保法人[一二三四五六七八九十]被住所地.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业法人代表" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^担保法人[一二三四五六七八九十]被代表人.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业简称" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^担保法人[一二三四五六七八九十]被简称.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业邮寄地址" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^担保法人[一二三四五六七八九十]被合同地址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业联系人手机号码" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^担保法人[一二三四五六七八九十]被联系电话.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业座机号码" fixedValue=""/>
+        <column name="被告企业法人代表职位" fixedValue=""/>
+        <column name="被告当前地址/常用地址" fixedValue=""/>
+        <column name="案件标的金额" cellType="NUMERIC">
+            <associate handler="cn.xiaojianzheng.dongfeng.jiekuan.handler.AmountHandler">
+                <columnName>剩余本金</columnName>
+                <columnName>违约金</columnName>
+            </associate>
+        </column>
+        <column name="合同签订日期" cellType="DATE"/>
+        <column name="贷款金额" cellType="NUMERIC"/>
+        <column name="合同编号"/>
+        <column name="贷款年利率" cellType="NUMERIC">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.InterestRateHandler">
+                <columnName>贷款年利率</columnName>
+            </associate>
+        </column>
+        <column name="月供款" cellType="NUMERIC"/>
+        <column name="鉴定书编号"/>
+        <column name="经销商全称"/>
+        <column name="经销商简称"/>
+        <column name="贷款期数" cellType="NUMERIC"/>
+        <column name="贷款发放日期" cellType="DATE"/>
+        <column name="贷款期间"/>
+        <column name="贷款届满之日" cellType="DATE"/>
+        <column name="贷款届满次日" cellType="DATE"/>
+        <column name="每月还款日"/>
+        <column name="保证期间【贷款届满之日后两年】" from="保证期间"/>
+        <column name="剩余本金" cellType="NUMERIC"/>
+        <column name="利息总额" cellType="NUMERIC"/>
+        <column name="厂家承担利息" cellType="NUMERIC"/>
+        <column name="经销商承担利息" cellType="NUMERIC"/>
+        <column name="客户承担利息" cellType="NUMERIC"/>
+        <column name="收费方式"/>
+        <column name="客户实际承担利率" cellType="NUMERIC">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.InterestRateHandler">
+                <columnName>客户实际承担利率</columnName>
+            </associate>
+        </column>
+        <column name="贷款逾期时间" cellType="DATE"/>
+        <column name="罚息起算日" cellType="DATE"/>
+        <column name="合作协议签订日"/>
+        <column name="合作协议公司全称" from="合作协议被告全称"/>
+        <column name="合作协议公司简称" from="合作协议被告简称"/>
+        <column name="合作协议编号"/>
+        <column name="合作协议有效期"/>
+        <column name="合作协议顺延日"/>
+        <column name="购销合同签订日"/>
+        <column name="担保书一被签订日期" from="担保一被担保书签订时间" cellType="DATE"/>
+        <column name="担保书二被签订时间" from="担保二被担保书签订时间" cellType="DATE"/>
+        <column name="担保法人一被担保书签订时间"/>
+        <column name="担保法人二被担保书签订时间"/>
+        <column name="主借款人" allowEmpty="false">
+            <associate>
+                <columnName>一被姓名</columnName>
+            </associate>
+        </column>
+        <column name="保证人" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.GuarantorHandler">
+                <columnName>一被姓名</columnName>
+                <columnName>^(担保|担保法人)[一二三四五六七八九十]被(姓名|全称).*?</columnName>
+            </associate>
+        </column>
+        <column name="违约金"/>
+        <column name="罚息"/>
+        <column name="贷款方式"/>
+        <column name="起诉状送达副本之日"/>
+    </columns>
+</excel>

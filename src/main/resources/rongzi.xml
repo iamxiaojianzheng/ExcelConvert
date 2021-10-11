@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<excel removeBlankRowAfterConvert="true"
+       removeRowHandler="cn.xiaojianzheng.dongfeng.handler.ExcelRemoveRowHandler"
+       excelConvertHandlerClass="cn.xiaojianzheng.dongfeng.convert.DongfengExcelConvert">
+
+    <!-- 全局配置 -->
+    <properties>
+        <!-- 布尔值单元格 转换 -->
+        <booleanProperty yes="是" no="否"/>
+        <!-- 小数保留几位，默认四舍五入 -->
+        <globalScale>2</globalScale>
+        <!-- 是否需要四舍五入 -->
+        <needScale>false</needScale>
+        <!-- 百分比格式化 -->
+        <globalBigDecimalFormat>0.######</globalBigDecimalFormat>
+        <!-- 日期格式化 -->
+        <globalDatetimeFormat>yyyy年M月d日</globalDatetimeFormat>
+        <!-- 解析日期格式，可以添加多个 -->
+        <parseDateFormats>
+            <parseDateFormat>yyyy-MM</parseDateFormat>
+            <parseDateFormat>HH:mm</parseDateFormat>
+        </parseDateFormats>
+    </properties>
+
+    <columns>
+        <column name="序号" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.IndexNumberHandler">
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+            </associate>
+        </column>
+        <column name="合同编码（合同版本）" from="合同版本号" allowEmpty="false"/>
+        <column name="还款方式" allowEmpty="false"/>
+        <column name="是否为电子合同" allowEmpty="false"/>
+        <column name="是否有展期" from="是否是展期" allowEmpty="false"/>
+        <column name="被告类型" allowEmpty="false">
+            <associate allowEmpty="false" handler="cn.xiaojianzheng.dongfeng.handler.AccusedTypeHandler">
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+            </associate>
+        </column>
+        <column name="被告名称" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+            </associate>
+        </column>
+        <column name="被告民族">
+            <associate>
+                <columnName>^(自然承租人|融资)?([一二三四五六七八九十]被)?民族.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告证件号" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(自然承租人|融资)?([一二三四五六七八九十]被)?身份证号码.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告手机号码" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?联系电话.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告身份证地址/户籍地址" allowEmpty="false">
+            <associate allowEmpty="false">
+                <columnName>^(自然承租人|法人承租人|融资)?([一二三四五六七八九十]被)?(住址|住所地).*?</columnName>
+            </associate>
+        </column>
+        <column name="被告司法送达地址">
+            <associate>
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?合同地址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告送达约定类型" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedSendTypeHandler">
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?合同地址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告是否为保证人" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedIsGuarantorHandler">
+                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+            </associate>
+        </column>
+        <column name="被告单位名称"/>
+        <column name="被告单位地址"/>
+        <column name="被告企业注册地址" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^融资法人[一二三四五六七八九十]被住所地.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业法人代表" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^(法人承租人|融资法人)([一二三四五六七八九十]被)?代表人.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业简称" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^(法人承租人|融资法人)([一二三四五六七八九十]被)?简称.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业邮寄地址" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^(法人|融资法人)([一二三四五六七八九十]被)?合同地址.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业联系人手机号码" allowEmpty="false">
+            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
+                <columnName>被告数量</columnName>
+                <columnName>^(法人|融资法人)([一二三四五六七八九十]被)?联系电话.*?</columnName>
+            </associate>
+        </column>
+        <column name="被告企业座机号码"/>
+        <column name="案件标的金额" from="拖欠款项总金额(即立案金额)"/>
+        <column name="供货人全称"/>
+        <column name="供货人简称"/>
+        <column name="有无保证金"/>
+        <column name="有无留购金"/>
+        <column name="有无首期租金"/>
+        <column name="应付款截止日"/>
+        <column name="后续违约金起算日"/>
+        <column name="拖欠款项总金额"/>
+        <column name="已拖欠月租金"/>
+        <column name="逾期违约金"/>
+        <column name="未到期应付租金"/>
+        <column name="冲抵保证金"/>
+        <column name="保证金冲抵期数"/>
+        <column name="应付款项金额"/>
+        <column name="所有应付未付租金" from="一次性应付租金"/>
+        <column name="逾期时间"/>
+        <column name="缓冲信贷金额"/>
+        <column name="展1期金额"/>
+        <column name="展2期金额"/>
+        <column name="展3期金额"/>
+        <column name="展4期金额"/>
+        <column name="融资款发放日"/>
+        <column name="鉴定书编号"/>
+        <column name="融资金额"/>
+        <column name="融资总租金"/>
+        <column name="融资合同签订日"/>
+        <column name="融资合同编号"/>
+        <column name="首期租金"/>
+        <column name="租赁期数"/>
+        <column name="留购金金额"/>
+        <column name="月租金金额"/>
+        <column name="月租金金额（展期后）"/>
+        <column name="租金支付起算日"/>
+        <column name="租赁期间"/>
+        <column name="保证期间"/>
+        <column name="担保公司简称"/>
+        <column name="担保书签订日"/>
+        <column name="购销合同签订日"/>
+        <column name="承租人"/>
+        <column name="保证人"/>
+        <column name="贷款方式"/>
+        <column name="未结租金（开庭后数据）"/>
+        <column name="应收日期（开庭后）"/>
+        <column name="抵扣租金期数（开庭后）"/>
+        <column name="起诉状送达副本之日"/>
+        <column name="合作协议签订日"/>
+        <column name="合作协议公司全称" from="合作协议被告全称"/>
+        <column name="合作协议公司简称" from="合作协议被告简称"/>
+        <column name="合作协议编号"/>
+        <column name="合作协议有效期"/>
+        <column name="合作协议顺延"/>
+        <column name="担保一被担保书签订时间"/>
+        <column name="担保二被担保书签订时间"/>
+        <column name="担保三被担保书签订时间"/>
+        <column name="担保法人一被担保书签订时间"/>
+        <column name="担保法人二被担保书签订时间"/>
+    </columns>
+</excel>
