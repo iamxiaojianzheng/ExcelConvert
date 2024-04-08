@@ -1,14 +1,13 @@
 package cn.xiaojianzheng.framework.util;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xiaojianzheng.framework.enums.ExcelCellType;
 import cn.xiaojianzheng.framework.exception.CellParseException;
 import cn.xiaojianzheng.framework.xml.Column;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,22 +23,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Component
+/**
+ * 单元格解析工具类
+ */
+@Slf4j
 public class CellParseUtil {
 
-    private final BigDecimal percentageConstant = new BigDecimal(100);
+    private static final BigDecimal percentageConstant = new BigDecimal(100);
 
-    private final Logger logger = LoggerFactory.getLogger(CellParseUtil.class);
+    private static List<String> parseDateFormatList = new ArrayList<>(Arrays.asList("yyyy-MM-dd", "yyyy/MM/dd", "yyyy年MM月dd日", "yyyyMMdd"));
 
-    private List<String> parseDateFormatList = new ArrayList<>(Arrays.asList("yyyy-MM-dd", "yyyy/MM/dd", "yyyy年MM月dd日", "yyyyMMdd"));
+    @Setter
+    private static String globalDateFormat = "yyyy年MM月dd日";
 
-    private String globalDateFormat = "yyyy年MM月dd日";
+    @Setter
+    private static DecimalFormat decimalFormat;
 
-    private DecimalFormat decimalFormat;
+    @Setter
+    private static Boolean needScale;
 
-    private Boolean needScale;
-
-    private Integer globalScale;
+    @Setter
+    private static Integer globalScale;
 
     /**
      * 含公式处理val
@@ -61,11 +65,38 @@ public class CellParseUtil {
         return cellValue;
     }
 
-    public String doParse(Cell cell) {
+    private static boolean containsAny(CharSequence str, CharSequence... testStrs) {
+        if (StrUtil.isNotBlank(str) && ObjectUtil.isNotEmpty(Arrays.asList(testStrs))) {
+            for (CharSequence checkStr : testStrs) {
+                if (str.toString().contains(checkStr)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static Date parseDate(String dateStr, CharSequence... testStrs) {
+        if (dateStr == null) {
+            return null;
+        }
+
+        for (CharSequence testStr : testStrs) {
+            SimpleDateFormat sdf = new SimpleDateFormat(testStr.toString());
+            try {
+                return sdf.parse(dateStr);
+            } catch (ParseException ignored) {
+            }
+        }
+
+        return null;
+    }
+
+    public static String doParse(Cell cell) {
         return doParse(cell, null);
     }
 
-    public String doParse(Cell cell, Column column) {
+    public static String doParse(Cell cell, Column column) {
         if (cell == null) {
             return null;
         }
@@ -131,7 +162,7 @@ public class CellParseUtil {
      * @param cell 单元格
      * @return 单元格中的文本内容
      */
-    protected String doStringCell(Cell cell) {
+    protected static String doStringCell(Cell cell) {
         return cell.getStringCellValue();
     }
 
@@ -142,11 +173,11 @@ public class CellParseUtil {
      * @param cell 单元格
      * @return 单元格最终计算出来的数值
      */
-    protected BigDecimal doNumericCell(Cell cell) {
+    protected static BigDecimal doNumericCell(Cell cell) {
         BigDecimal value = null;
 
         try {
-            value = new BigDecimal(cell.getNumericCellValue());
+            value = BigDecimal.valueOf(cell.getNumericCellValue());
         } catch (Exception e) {
             switch (cell.getCellType()) {
                 case STRING:
@@ -176,7 +207,7 @@ public class CellParseUtil {
                     break;
                 case FORMULA:
                     String s = doFormulaCell(cell);
-                    if (StringUtils.hasText(s)) {
+                    if (StrUtil.isNotBlank(s)) {
                         value = new BigDecimal(s);
                     } else {
                         try {
@@ -189,7 +220,7 @@ public class CellParseUtil {
                 case BLANK:
                     break;
                 default:
-                    logger.error("Unexpected value: " + cell.getCellType());
+                    log.error("Unexpected value: {}", cell.getCellType());
             }
         }
 
@@ -202,7 +233,7 @@ public class CellParseUtil {
      * @param cell 单元格
      * @return format之后的日期字符串
      */
-    protected Date doDateCell(Cell cell) {
+    protected static Date doDateCell(Cell cell) {
         Date date = null;
 
         try {
@@ -210,7 +241,7 @@ public class CellParseUtil {
         } catch (Exception e) {
             switch (cell.getCellType()) {
                 case STRING:
-                    if (StringUtils.hasText(cell.getStringCellValue())) {
+                    if (StrUtil.isNotBlank(cell.getStringCellValue())) {
                         date = parseDate(cell.getStringCellValue(), "yyyy-MM-dd", "yyyy/MM/dd", "yyyy年MM月dd日", "yyyyMMdd");
                     }
                     break;
@@ -239,7 +270,7 @@ public class CellParseUtil {
      * @param cell 单元格
      * @return 计算公式之后的结果字符串
      */
-    protected String doFormulaCell(Cell cell) {
+    protected static String doFormulaCell(Cell cell) {
         FormulaEvaluator evaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
         String result = null;
 
@@ -267,7 +298,7 @@ public class CellParseUtil {
     /**
      * 读取带有逗号的金额数字
      */
-    private BigDecimal readStrAsBigDecimalAndCheckFormat(String str) {
+    private static BigDecimal readStrAsBigDecimalAndCheckFormat(String str) {
         DecimalFormat format = new DecimalFormat();
         format.setParseBigDecimal(true);
         ParsePosition position = new ParsePosition(0);
@@ -278,52 +309,9 @@ public class CellParseUtil {
         return null;
     }
 
-    private static boolean containsAny(CharSequence str, CharSequence... testStrs) {
-        if (StringUtils.hasText(str) && !CollectionUtils.isEmpty(Arrays.asList(testStrs))) {
-            for (CharSequence checkStr : testStrs) {
-                if (str.toString().contains(checkStr)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static Date parseDate(String dateStr, CharSequence... testStrs) {
-        if (dateStr == null) {
-            return null;
-        }
-
-        for (CharSequence testStr : testStrs) {
-            SimpleDateFormat sdf = new SimpleDateFormat(testStr.toString());
-            try {
-                return sdf.parse(dateStr);
-            } catch (ParseException ignored) {
-            }
-        }
-
-        return null;
-    }
-
-    public void setGlobalDateFormat(String globalDateFormat) {
-        this.globalDateFormat = globalDateFormat;
-    }
-
-    public void setGlobalBigDecimalFormat(String globalBigDecimalFormat) {
-        this.decimalFormat = new DecimalFormat(globalBigDecimalFormat);
-    }
-
-    public void setNeedScale(Boolean needScale) {
-        this.needScale = needScale;
-    }
-
-    public void setGlobalScale(Integer globalScale) {
-        this.globalScale = globalScale;
-    }
-
-    public void setParseDateFormatList(List<String> parseDateFormatList) {
-        this.parseDateFormatList.addAll(parseDateFormatList);
-        this.parseDateFormatList = parseDateFormatList.stream().distinct().collect(Collectors.toList());
+    public static void setParseDateFormatList(List<String> parseDateFormatList) {
+        CellParseUtil.parseDateFormatList.addAll(parseDateFormatList);
+        CellParseUtil.parseDateFormatList = parseDateFormatList.stream().distinct().collect(Collectors.toList());
     }
 
 }

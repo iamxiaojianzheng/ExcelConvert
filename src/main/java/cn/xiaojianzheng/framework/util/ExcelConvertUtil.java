@@ -1,44 +1,42 @@
 package cn.xiaojianzheng.framework.util;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xiaojianzheng.framework.convert.AbstractExcelConvertHandler;
 import cn.xiaojianzheng.framework.exception.ExcelConvertExceptionUtil;
 import cn.xiaojianzheng.framework.handler.RemoveRowHandler;
+import cn.xiaojianzheng.framework.handler.impl.EmptyRowRemoveHandler;
 import cn.xiaojianzheng.framework.xml.AssociateOriginColumns;
 import cn.xiaojianzheng.framework.xml.Column;
 import cn.xiaojianzheng.framework.xml.ExcelXml;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import cn.xiaojianzheng.framework.xml.adapter.AdapterUtil;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.util.*;
 
-@Component
 public class ExcelConvertUtil {
 
-    private final Unmarshaller unmarshaller;
+    private final Unmarshaller unmarshaller = JAXBContext.newInstance(ExcelXml.class).createUnmarshaller();
 
-    private final List<XmlAdapter<?, ?>> adapters;
+    private static final List<XmlAdapter<?, ?>> adapters = AdapterUtil.getDefaultAdapters();
 
-    private final CellParseUtil cellParseUtil;
+    private static final List<RemoveRowHandler> removeRowHandlers = new ArrayList<>();
 
-    private RemoveRowHandler removeRowHandler;
+    public static void addRemoveRowHandler(List<RemoveRowHandler> handlers) {
+        if (ObjectUtil.isNotEmpty(handlers)) {
+            removeRowHandlers.addAll(0, handlers);
+        }
+    }
 
-    public ExcelConvertUtil(List<XmlAdapter<?, ?>> adapters, CellParseUtil cellParseUtil, RemoveRowHandler removeRowHandler) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(ExcelXml.class);
-        this.unmarshaller = jaxbContext.createUnmarshaller();
-        this.adapters = adapters;
-        this.cellParseUtil = cellParseUtil;
-        this.removeRowHandler = removeRowHandler;
+    public ExcelConvertUtil() throws JAXBException {
+        removeRowHandlers.add(new EmptyRowRemoveHandler());
     }
 
     public void convert(File source, File target, File xmlFile) {
@@ -55,7 +53,7 @@ public class ExcelConvertUtil {
              Workbook excelReader = WorkbookFactory.create(inputStream);
              Workbook excelWriter = new XSSFWorkbook()) {
 
-            Optional.ofNullable(adapters)
+            Optional.of(adapters)
                     .orElse(Collections.emptyList())
                     .forEach(unmarshaller::setAdapter);
 
@@ -63,14 +61,14 @@ public class ExcelConvertUtil {
             excelXml.setExcelName(source.getName());
             checkExcelXml(excelXml);
             if (excelXml.getRemoveRowHandler() != null) {
-                removeRowHandler = excelXml.getRemoveRowHandler();
+                removeRowHandlers.add(0, excelXml.getRemoveRowHandler());
             }
 
-            cellParseUtil.setGlobalDateFormat(excelXml.getProperties().getGlobalDatetimeFormat());
-            cellParseUtil.setGlobalBigDecimalFormat(excelXml.getProperties().getGlobalBigDecimalFormat());
-            cellParseUtil.setNeedScale(excelXml.getProperties().getNeedScale());
-            cellParseUtil.setGlobalScale(excelXml.getProperties().getGlobalScale());
-            cellParseUtil.setParseDateFormatList(excelXml.getProperties().getParseDateFormats());
+            CellParseUtil.setGlobalDateFormat(excelXml.getProperties().getGlobalDatetimeFormat());
+            CellParseUtil.setDecimalFormat(new DecimalFormat(excelXml.getProperties().getGlobalBigDecimalFormat()));
+            CellParseUtil.setNeedScale(excelXml.getProperties().getNeedScale());
+            CellParseUtil.setGlobalScale(excelXml.getProperties().getGlobalScale());
+            CellParseUtil.setParseDateFormatList(excelXml.getProperties().getParseDateFormats());
 
             // 追加信息
             List<Column> columns = excelXml.getColumns();
@@ -107,8 +105,12 @@ public class ExcelConvertUtil {
             });
 
             // 删除空白行
-            if (excelXml.getRemoveBlankRowAfterConvert()) {
-                removeAllBlankRow(sheetWriter, columns);
+            for (RemoveRowHandler removeRowHandler : removeRowHandlers) {
+                // 不允许删除空白行，并且当前处理器为 EmptyRowRemoveHandler
+                if (!excelXml.getRemoveBlankRowAfterConvert() && removeRowHandler instanceof EmptyRowRemoveHandler) {
+                    continue;
+                }
+                removeAllBlankRow(removeRowHandler, sheetWriter, columns);
             }
 
             try (FileOutputStream outStream = new FileOutputStream(target)) {
@@ -120,9 +122,9 @@ public class ExcelConvertUtil {
     }
 
     /**
-     * 删除所有空白行
+     * 根据{@link RemoveRowHandler}处理器删除行
      */
-    private void removeAllBlankRow(Sheet sheetReader, List<Column> columns) {
+    private void removeAllBlankRow(RemoveRowHandler removeRowHandler, Sheet sheetReader, List<Column> columns) {
         int lastRowNum = sheetReader.getLastRowNum();
         for (int i = 0; i <= lastRowNum; i++) {
             Row row = sheetReader.getRow(i);
@@ -141,7 +143,7 @@ public class ExcelConvertUtil {
     private boolean isBlankRow(Row row) {
         for (int j = 0; j < row.getLastCellNum(); j++) {
             Cell cell = row.getCell(j);
-            if (cell != null && StringUtils.hasText(cellParseUtil.doParse(cell))) {
+            if (cell != null && StrUtil.isNotBlank(CellParseUtil.doParse(cell))) {
                 return false;
             }
         }
@@ -153,7 +155,7 @@ public class ExcelConvertUtil {
             AssociateOriginColumns associateOriginColumns = column.getAssociateOriginColumns();
             if (associateOriginColumns != null
                     && associateOriginColumns.getHandler() == null
-                    && CollectionUtils.isEmpty(associateOriginColumns.getColumnNames())) {
+                    && ObjectUtil.isEmpty(associateOriginColumns.getColumnNameRegex())) {
                 ExcelConvertExceptionUtil.of("{}列下存在空的associate标签（既没有handler属性，也没有columnName子元素）", column.getName());
             }
         });

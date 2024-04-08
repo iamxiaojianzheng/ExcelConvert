@@ -1,9 +1,7 @@
 package cn.xiaojianzheng.framework.xml.adapter.lang;
 
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
-import org.springframework.stereotype.Component;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-@Component
 public class IntegerAdapter extends XmlAdapter<String, Integer> {
     @Override
     public Integer unmarshal(String v) throws Exception {

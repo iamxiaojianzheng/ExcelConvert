@@ -2,12 +2,12 @@ package cn.xiaojianzheng.framework.xml;
 
 import cn.xiaojianzheng.framework.convert.AbstractExcelConvertHandler;
 import cn.xiaojianzheng.framework.handler.RemoveRowHandler;
+import cn.xiaojianzheng.framework.xml.adapter.attribute.AbstractExcelConvertClassAdapter;
 import cn.xiaojianzheng.framework.xml.adapter.attribute.RemoveRowHandlerAdapter;
 import cn.xiaojianzheng.framework.xml.adapter.lang.BooleanAdapter;
-import cn.xiaojianzheng.framework.xml.adapter.attribute.AbstractExcelConvertClassAdapter;
 import cn.xiaojianzheng.framework.xml.adapter.lang.IntegerAdapter;
-import jakarta.xml.bind.annotation.*;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;

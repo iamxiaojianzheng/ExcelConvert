@@ -1,21 +1,14 @@
 package cn.xiaojianzheng.framework.xml.adapter.attribute;
 
 import cn.xiaojianzheng.framework.handler.AssociateOriginColumnsHandler;
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
+import cn.xiaojianzheng.framework.util.CellParseUtil;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-@Component
 public class AssociateOriginColumnsHandlerAdapter extends XmlAdapter<String, AssociateOriginColumnsHandler> {
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @Override
     public AssociateOriginColumnsHandler unmarshal(String v) throws Exception {
         try {
-            return (AssociateOriginColumnsHandler) applicationContext.getAutowireCapableBeanFactory().createBean(Class.forName(v));
+            return (AssociateOriginColumnsHandler) Class.forName(v).getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException ignored) {
         }
         return null;

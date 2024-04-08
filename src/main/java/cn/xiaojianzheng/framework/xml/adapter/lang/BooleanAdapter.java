@@ -1,13 +1,13 @@
 package cn.xiaojianzheng.framework.xml.adapter.lang;
 
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
-import org.springframework.stereotype.Component;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-@Component
+import java.util.Objects;
+
 public class BooleanAdapter extends XmlAdapter<String, Boolean> {
     @Override
     public Boolean unmarshal(String v) throws Exception {
-        return "true".equals(v);
+        return Objects.equals(v, "true");
     }
 
     @Override

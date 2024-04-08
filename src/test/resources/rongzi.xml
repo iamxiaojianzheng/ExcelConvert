@@ -26,7 +26,7 @@
     <columns>
         <column name="序号" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.IndexNumberHandler">
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnNameRegex>
             </associate>
         </column>
         <column name="合同编码（合同版本）" from="合同版本号" allowEmpty="false"/>
@@ -35,79 +35,79 @@
         <column name="是否有展期" from="是否是展期" allowEmpty="false"/>
         <column name="被告类型" allowEmpty="false">
             <associate allowEmpty="false" handler="cn.xiaojianzheng.dongfeng.handler.AccusedTypeHandler">
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告名称" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告民族">
             <associate>
-                <columnName>^(自然承租人|融资)?([一二三四五六七八九十]被)?民族.*?</columnName>
+                <columnNameRegex>^(自然承租人|融资)?([一二三四五六七八九十]被)?民族.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告证件号" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(自然承租人|融资)?([一二三四五六七八九十]被)?身份证号码.*?</columnName>
+                <columnNameRegex>^(自然承租人|融资)?([一二三四五六七八九十]被)?身份证号码.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告手机号码" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?联系电话.*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?联系电话.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告身份证地址/户籍地址" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(自然承租人|法人承租人|融资)?([一二三四五六七八九十]被)?(住址|住所地).*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资)?([一二三四五六七八九十]被)?(住址|住所地).*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告司法送达地址">
             <associate>
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?合同地址.*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?合同地址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告送达约定类型" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedSendTypeHandler">
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?合同地址.*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?合同地址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告是否为保证人" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedIsGuarantorHandler">
-                <columnName>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnName>
+                <columnNameRegex>^(自然承租人|法人承租人|融资|融资法人)?([一二三四五六七八九十]被)?(姓名|全称).*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告单位名称"/>
         <column name="被告单位地址"/>
         <column name="被告企业注册地址" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^融资法人[一二三四五六七八九十]被住所地.*?</columnName>
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^融资法人[一二三四五六七八九十]被住所地.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业法人代表" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^(法人承租人|融资法人)([一二三四五六七八九十]被)?代表人.*?</columnName>
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^(法人承租人|融资法人)([一二三四五六七八九十]被)?代表人.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业简称" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^(法人承租人|融资法人)([一二三四五六七八九十]被)?简称.*?</columnName>
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^(法人承租人|融资法人)([一二三四五六七八九十]被)?简称.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业邮寄地址" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^(法人|融资法人)([一二三四五六七八九十]被)?合同地址.*?</columnName>
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^(法人|融资法人)([一二三四五六七八九十]被)?合同地址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业联系人手机号码" allowEmpty="false">
             <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^(法人|融资法人)([一二三四五六七八九十]被)?联系电话.*?</columnName>
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^(法人|融资法人)([一二三四五六七八九十]被)?联系电话.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业座机号码"/>

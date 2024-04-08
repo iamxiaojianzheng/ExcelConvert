@@ -8,7 +8,6 @@ import cn.xiaojianzheng.framework.xml.ExcelXml;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,14 +17,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractExcelConvertHandler implements ExcelConvert {
 
-    protected CellParseUtil cellParseUtil;
-
-    private final RowConvertRuleHandler rowConvertRuleHandler;
-
-    protected AbstractExcelConvertHandler(CellParseUtil cellParseUtil, RowConvertRuleHandler rowConvertRuleHandler) {
-        this.cellParseUtil = cellParseUtil;
-        this.rowConvertRuleHandler = rowConvertRuleHandler;
-    }
+    private final RowConvertRuleHandler rowConvertRuleHandler = new RowConvertRuleHandler();
 
     @Override
     public int doWriterTitleRowHandler(Sheet sheetReader, Sheet sheetWriter, ExcelXml excelXml) {
@@ -77,7 +69,7 @@ public abstract class AbstractExcelConvertHandler implements ExcelConvert {
             Cell cellReader = sourceColumnNameToCellMap.get(from);
             String oldCellValue = null;
             if (cellReader != null) {
-                oldCellValue = cellParseUtil.doParse(cellReader, column);
+                oldCellValue = CellParseUtil.doParse(cellReader, column);
             }
 
             // <convertRules>
@@ -89,7 +81,7 @@ public abstract class AbstractExcelConvertHandler implements ExcelConvert {
                 continue;
             }
 
-            if (!StringUtils.hasText(oldCellValue) && !column.isAllowEmpty()) {
+            if (oldCellValue != null && !oldCellValue.matches("\\S*") && !column.isAllowEmpty()) {
                 ExcelConvertExceptionUtil.of("单元格[{}行, {}列, {}]填充值失败，请检查原表中【{}】相关列是否缺失数据",
                         rowWriter.getRowNum() + 1, indexToColumn(cellReader.getColumnIndex()), column.getName(), column.getFrom());
             }

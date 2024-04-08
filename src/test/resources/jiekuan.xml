@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <excel removeBlankRowAfterConvert="true"
-       removeRowHandler="cn.xiaojianzheng.dongfeng.handler.ExcelRemoveRowHandler"
-       excelConvertHandlerClass="cn.xiaojianzheng.dongfeng.convert.DongfengExcelConvert">
+       removeRowHandler="dongfeng.handler.ExcelRemoveRowHandler"
+       excelConvertHandlerClass="dongfeng.convert.DongfengExcelConvert">
 
     <!-- 全局配置 -->
     <properties>
@@ -25,8 +25,8 @@
 
     <columns>
         <column name="序号" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.IndexNumberHandler">
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            <associate handler="dongfeng.handler.IndexNumberHandler">
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnNameRegex>
             </associate>
         </column>
         <column name="合同版本号" allowEmpty="false"/>
@@ -39,97 +39,97 @@
         <column name="是否是电子合同" from="是否为电子合同" allowEmpty="false"/>
         <column name="是否有展期" allowEmpty="false"/>
         <column name="被告类型" allowEmpty="false">
-            <associate allowEmpty="false" handler="cn.xiaojianzheng.dongfeng.handler.AccusedTypeHandler">
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            <associate allowEmpty="false" handler="dongfeng.handler.AccusedTypeHandler">
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告送达约定类型" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedSendTypeHandler">
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被合同地址.*?</columnName>
+            <associate handler="dongfeng.handler.AccusedSendTypeHandler">
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被合同地址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告是否为第三人" fixedValue="否"/>
         <!-- 第一个被告填否，其余填是 -->
         <column name="被告是否为保证人">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.AccusedIsGuarantorHandler">
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+            <associate handler="dongfeng.handler.AccusedIsGuarantorHandler">
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告名称" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnName>
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被(姓名|全称)(（在担保书上(盖章|签字)的(自然人|法人)保证人）)?.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告民族">
             <associate>
-                <columnName>^(担保)?[一二三四五六七八九十]被民族.*?</columnName>
+                <columnNameRegex>^(担保)?[一二三四五六七八九十]被民族.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告身份证地址/户籍地址" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(担保)?[一二三四五六七八九十]被住址.*?</columnName>
+                <columnNameRegex>^(担保)?[一二三四五六七八九十]被住址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告证件号" allowEmpty="false">
             <associate allowEmpty="false">
-                <columnName>^(担保)?[一二三四五六七八九十]被身份证号码?.*?</columnName>
+                <columnNameRegex>^(担保)?[一二三四五六七八九十]被身份证号码?.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告司法送达地址" allowEmpty="false">
             <associate>
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被合同地址.*?</columnName>
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被合同地址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告手机号码" allowEmpty="false">
             <associate>
-                <columnName>^(担保|担保法人)?[一二三四五六七八九十]被(联系)?电话.*?</columnName>
+                <columnNameRegex>^(担保|担保法人)?[一二三四五六七八九十]被(联系)?电话.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业注册地址" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^担保法人[一二三四五六七八九十]被住所地.*?</columnName>
+            <associate handler="dongfeng.handler.CompanyHandler">
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^担保法人[一二三四五六七八九十]被住所地.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业法人代表" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^担保法人[一二三四五六七八九十]被代表人.*?</columnName>
+            <associate handler="dongfeng.handler.CompanyHandler">
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^担保法人[一二三四五六七八九十]被代表人.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业简称" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^担保法人[一二三四五六七八九十]被简称.*?</columnName>
+            <associate handler="dongfeng.handler.CompanyHandler">
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^担保法人[一二三四五六七八九十]被简称.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业邮寄地址" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^担保法人[一二三四五六七八九十]被合同地址.*?</columnName>
+            <associate handler="dongfeng.handler.CompanyHandler">
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^担保法人[一二三四五六七八九十]被合同地址.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业联系人手机号码" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.CompanyHandler">
-                <columnName>被告数量</columnName>
-                <columnName>^担保法人[一二三四五六七八九十]被联系电话.*?</columnName>
+            <associate handler="dongfeng.handler.CompanyHandler">
+                <columnNameRegex>被告数量</columnNameRegex>
+                <columnNameRegex>^担保法人[一二三四五六七八九十]被联系电话.*?</columnNameRegex>
             </associate>
         </column>
         <column name="被告企业座机号码" fixedValue=""/>
         <column name="被告企业法人代表职位" fixedValue=""/>
         <column name="被告当前地址/常用地址" fixedValue=""/>
         <column name="案件标的金额" cellType="NUMERIC">
-            <associate handler="cn.xiaojianzheng.dongfeng.jiekuan.handler.AmountHandler">
-                <columnName>剩余本金</columnName>
-                <columnName>违约金</columnName>
+            <associate handler="dongfeng.handler.jiekuan.AmountHandler">
+                <columnNameRegex>剩余本金</columnNameRegex>
+                <columnNameRegex>违约金</columnNameRegex>
             </associate>
         </column>
         <column name="合同签订日期" cellType="DATE"/>
         <column name="贷款金额" cellType="NUMERIC"/>
         <column name="合同编号"/>
         <column name="贷款年利率" cellType="NUMERIC">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.InterestRateHandler">
-                <columnName>贷款年利率</columnName>
+            <associate handler="dongfeng.handler.InterestRateHandler">
+                <columnNameRegex>贷款年利率</columnNameRegex>
             </associate>
         </column>
         <column name="月供款" cellType="NUMERIC"/>
@@ -150,8 +150,8 @@
         <column name="客户承担利息" cellType="NUMERIC"/>
         <column name="收费方式"/>
         <column name="客户实际承担利率" cellType="NUMERIC">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.InterestRateHandler">
-                <columnName>客户实际承担利率</columnName>
+            <associate handler="dongfeng.handler.InterestRateHandler">
+                <columnNameRegex>客户实际承担利率</columnNameRegex>
             </associate>
         </column>
         <column name="贷款逾期时间" cellType="DATE"/>
@@ -169,13 +169,13 @@
         <column name="担保法人二被担保书签订时间"/>
         <column name="主借款人" allowEmpty="false">
             <associate>
-                <columnName>一被姓名</columnName>
+                <columnNameRegex>一被姓名</columnNameRegex>
             </associate>
         </column>
         <column name="保证人" allowEmpty="false">
-            <associate handler="cn.xiaojianzheng.dongfeng.handler.GuarantorHandler">
-                <columnName>一被姓名</columnName>
-                <columnName>^(担保|担保法人)[一二三四五六七八九十]被(姓名|全称).*?</columnName>
+            <associate handler="dongfeng.handler.GuarantorHandler">
+                <columnNameRegex>一被姓名</columnNameRegex>
+                <columnNameRegex>^(担保|担保法人)[一二三四五六七八九十]被(姓名|全称).*?</columnNameRegex>
             </associate>
         </column>
         <column name="违约金"/>
